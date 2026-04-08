@@ -1,20 +1,85 @@
-class BookMyStayApp {
+import java.util.*;
 
-  // Application constants
-  private static final String APP_NAME = "Book My Stay";
-  private static final String VERSION = "v1.0";
+// Reservation class (represents a booking request)
+class Reservation {
+  private String guestName;
+  private String roomType;
+
+  public Reservation(String guestName, String roomType) {
+    this.guestName = guestName;
+    this.roomType = roomType;
+  }
+
+  public String getGuestName() {
+    return guestName;
+  }
+
+  public String getRoomType() {
+    return roomType;
+  }
+
+  @Override
+  public String toString() {
+    return "Guest: " + guestName + " | Room Type: " + roomType;
+  }
+}
+
+// Booking Request Queue (FIFO)
+class BookingRequestQueue {
+
+  private Queue<Reservation> queue;
+
+  public BookingRequestQueue() {
+    queue = new LinkedList<>();
+  }
+
+  // Add booking request
+  public void addRequest(Reservation reservation) {
+    queue.offer(reservation);
+    System.out.println("Request added: " + reservation);
+  }
+
+  // View all queued requests
+  public void displayQueue() {
+    System.out.println("\n=== Booking Request Queue ===");
+
+    if (queue.isEmpty()) {
+      System.out.println("No pending requests.");
+      return;
+    }
+
+    for (Reservation r : queue) {
+      System.out.println(r);
+    }
+  }
+
+  // Peek next request (without removing)
+  public Reservation peekNext() {
+    return queue.peek();
+  }
+}
+
+// Main Application
+class BookMyStayApp {
 
   public static void main(String[] args) {
 
-    // Welcome message
-    System.out.println("==================================");
-    System.out.println(" Welcome to " + APP_NAME);
-    System.out.println(" Version: " + VERSION);
-    System.out.println("==================================");
+    System.out.println("=== Book My Stay - Booking Queue ===");
 
-    System.out.println("Your comfort, our priority!");
-    System.out.println("Thank you for choosing our service.");
+    // Initialize booking queue
+    BookingRequestQueue bookingQueue = new BookingRequestQueue();
 
-    // Application ends here
+    // Simulate guest booking requests
+    bookingQueue.addRequest(new Reservation("Alice", "Standard Room"));
+    bookingQueue.addRequest(new Reservation("Bob", "Suite Room"));
+    bookingQueue.addRequest(new Reservation("Charlie", "Deluxe Room"));
+
+    // Display queue (FCFS order)
+    bookingQueue.displayQueue();
+
+    // Show next request to be processed
+    System.out.println("\nNext request to process: " + bookingQueue.peekNext());
+
+    System.out.println("\nRequests are queued. Waiting for allocation system...");
   }
 }
