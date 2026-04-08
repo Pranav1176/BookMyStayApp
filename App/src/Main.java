@@ -1,84 +1,75 @@
-// Abstract base class
-abstract class Room {
-  protected String roomType;
-  protected double pricePerNight;
-  protected int availableRooms;
+import java.util.HashMap;
+import java.util.Map;
 
-  public Room(String roomType, double pricePerNight, int availableRooms) {
-    this.roomType = roomType;
-    this.pricePerNight = pricePerNight;
-    this.availableRooms = availableRooms;
+// RoomInventory class (central manager)
+class RoomInventory {
+
+  private Map<String, Integer> inventory;
+
+  public RoomInventory() {
+    inventory = new HashMap<>();
   }
 
-  // Abstract method
-  public abstract void displayDetails();
-}
-
-// Standard Room class
-class StandardRoom extends Room {
-
-  public StandardRoom(int availableRooms) {
-    super("Standard Room", 2000.0, availableRooms);
+  // Register room type with count
+  public void addRoomType(String roomType, int count) {
+    inventory.put(roomType, count);
   }
 
-  @Override
-  public void displayDetails() {
-    System.out.println("Room Type: " + roomType);
-    System.out.println("Price per Night: ₹" + pricePerNight);
-    System.out.println("Available Rooms: " + availableRooms);
-    System.out.println("-----------------------------");
-  }
-}
-
-// Deluxe Room class
-class DeluxeRoom extends Room {
-
-  public DeluxeRoom(int availableRooms) {
-    super("Deluxe Room", 3500.0, availableRooms);
+  // Get availability
+  public int getAvailability(String roomType) {
+    return inventory.getOrDefault(roomType, 0);
   }
 
-  @Override
-  public void displayDetails() {
-    System.out.println("Room Type: " + roomType);
-    System.out.println("Price per Night: ₹" + pricePerNight);
-    System.out.println("Available Rooms: " + availableRooms);
-    System.out.println("-----------------------------");
+  // Update availability (increase or decrease)
+  public void updateAvailability(String roomType, int change) {
+    int current = getAvailability(roomType);
+    int updated = current + change;
+
+    if (updated < 0) {
+      System.out.println("Cannot reduce below zero for " + roomType);
+    } else {
+      inventory.put(roomType, updated);
+    }
+  }
+
+  // Display full inventory
+  public void displayInventory() {
+    System.out.println("\n=== Current Room Inventory ===");
+    for (Map.Entry<String, Integer> entry : inventory.entrySet()) {
+      System.out.println(entry.getKey() + " : " + entry.getValue());
+    }
+    System.out.println("==============================");
   }
 }
 
-// Suite Room class
-class SuiteRoom extends Room {
-
-  public SuiteRoom(int availableRooms) {
-    super("Suite Room", 5000.0, availableRooms);
-  }
-
-  @Override
-  public void displayDetails() {
-    System.out.println("Room Type: " + roomType);
-    System.out.println("Price per Night: ₹" + pricePerNight);
-    System.out.println("Available Rooms: " + availableRooms);
-    System.out.println("-----------------------------");
-  }
-}
-
-// Main application
+// Main Application
 class BookMyStayApp {
 
   public static void main(String[] args) {
 
-    System.out.println("=== Welcome to Book My Stay ===");
+    System.out.println("=== Book My Stay - Inventory System ===");
 
-    // Create room objects with static availability
-    Room standard = new StandardRoom(10);
-    Room deluxe = new DeluxeRoom(5);
-    Room suite = new SuiteRoom(2);
+    // Initialize inventory
+    RoomInventory inventory = new RoomInventory();
 
-    // Display details
-    standard.displayDetails();
-    deluxe.displayDetails();
-    suite.displayDetails();
+    // Register room types
+    inventory.addRoomType("Standard Room", 10);
+    inventory.addRoomType("Deluxe Room", 5);
+    inventory.addRoomType("Suite Room", 2);
 
-    System.out.println("Thank you for visiting!");
+    // Display initial inventory
+    inventory.displayInventory();
+
+    // Simulate updates
+    System.out.println("\nBooking 2 Standard Rooms...");
+    inventory.updateAvailability("Standard Room", -2);
+
+    System.out.println("Adding 1 Suite Room...");
+    inventory.updateAvailability("Suite Room", +1);
+
+    // Display updated inventory
+    inventory.displayInventory();
+
+    System.out.println("\nSystem shutting down...");
   }
 }
